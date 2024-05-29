@@ -3,11 +3,13 @@
 
 const graph = require("../graph");
 const router = require("express-promise-router").default();
+const { createSubscription } = require("../graph");
 
 /* GET auth callback. */
 router.get("/signin", async function (req, res) {
   const scopes =
     process.env.OAUTH_SCOPES || "https://graph.microsoft.com/.default";
+
   const urlParameters = {
     scopes: scopes.split(","),
     redirectUri: process.env.OAUTH_REDIRECT_URI,
@@ -45,8 +47,6 @@ router.get("/callback", async function (req, res) {
 
     // Save the user's homeAccountId in their session
     req.session.userId = response.account.homeAccountId;
-    // @ts-ignore
-    const userId = response.account.homeAccountId;
 
     const user = await graph.getUserDetails(
       req.app.locals.msalClient,
@@ -65,6 +65,17 @@ router.get("/callback", async function (req, res) {
       debug: JSON.stringify(error, Object.getOwnPropertyNames(error)),
     });
   }
+
+  const msalClient = req.app.locals.msalClient;
+  const userId = req.session.userId;
+
+  (async () => {
+    try {
+      const response = await createSubscription(msalClient, userId);
+    } catch (error) {
+      console.error("Error setting up subscription:", error);
+    }
+  })();
 
   res.redirect("/");
 });

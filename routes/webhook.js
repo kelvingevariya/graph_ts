@@ -10,13 +10,15 @@ router.post("/", (req, res) => {
   // Respond to validation request
 
   // Handle the notification
-  const notification = req.body;
-  console.log("Received notification:", notification);
+  if (req.query.validationToken) {
+    res.status(200).send(req.query.validationToken);
+  } else {
+    const notification = req.body;
 
-  // Process the notification (e.g., send an alert)
-  // ...
+    console.log("Received notification:", notification);
 
-  res.status(200).json({ notification: notification });
+    res.status(202).json({ notification: notification });
+  }
 });
 
 router.get("/", (req, res) => {

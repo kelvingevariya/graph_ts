@@ -9,9 +9,9 @@ module.exports = {
     const client = getAuthenticatedClient(msalClient, userId);
     try {
       const subscription = {
-        changeType: "created,updated",
+        changeType: "created,updated,deleted",
         notificationUrl:
-          "https://86bf-2406-b400-d11-38e0-39dc-4629-52e8-1d64.ngrok-free.app/notifications",
+          "https://17a7-2406-b400-d11-38e0-2f50-7fa7-f109-540c.ngrok-free.app/notifications",
 
         resource: "/me/events",
         expirationDateTime: new Date(Date.now() + 3600000).toISOString(),
@@ -23,7 +23,10 @@ module.exports = {
         const response = await client.api("/subscriptions").post(subscription);
         console.log("Subscription created:", response);
       } catch (error) {
-        console.log("Error creating subscription:", error);
+        console.log(
+          "Error creating subscription:",
+          JSON.stringify(error, null, 2),
+        );
       }
     } catch (error) {
       console.error("Error creating subscription:", error);

@@ -140,9 +140,7 @@ export async function getTeamsMeetings(
   const client = getAuthenticatedClient(msalClient, userId);
 
   try {
-    const meetingsGet = await client
-      .api("/me/communications/onlineMeetings")
-      .get();
+    const meetingsGet = await client.api("/me/onlineMeetings").get();
     console.log(meetingsGet);
 
     return { value: meetingsGet };

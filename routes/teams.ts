@@ -32,7 +32,7 @@ router.get(
           req.app.locals.msalClient,
           req.session.userId,
         );
-        console.log(JSON.stringify(meetings));
+        // console.log(meetings);
         // Assign the meetings to the view parameters
         //@ts-ignore
         // params.meetings = meetings.value;

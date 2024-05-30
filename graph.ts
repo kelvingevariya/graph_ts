@@ -4,6 +4,7 @@
 import { Client } from "@microsoft/microsoft-graph-client";
 import "isomorphic-fetch";
 import { ConfidentialClientApplication } from "@azure/msal-node";
+import { Meetings } from "./types/Meetings";
 
 interface Subscription {
   changeType: string;
@@ -138,20 +139,17 @@ export async function getTeamsMeetings(
 ) {
   const client = getAuthenticatedClient(msalClient, userId);
 
-  const meetings = await client
-    .api("/me/events")
-    .select("subject,organizer,start,end,onlineMeeting,isOnlineMeeting")
-    .orderby("start/dateTime")
-    .top(50)
-    .get();
+  try {
+    const meetingsGet = await client
+      .api("/me/communications/onlineMeetings")
+      .get();
+    console.log(meetingsGet);
 
-  console.log(typeof meetings);
-
-  const onlineMeeting = meetings.value.filter(
-    (obj: Meeting) => obj.isOnlineMeeting === true,
-  );
-  console.log(onlineMeeting);
-  return { value: onlineMeeting };
+    return { value: meetingsGet };
+  } catch (error) {
+    console.log(JSON.stringify(error), "11111111");
+    return 0;
+  }
 }
 
 export function getAuthenticatedClient(

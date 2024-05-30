@@ -1,10 +1,11 @@
 import express, { Request, Response } from "express";
 import { getTeamsMeetings } from "../graph";
 import { Session } from "express-session";
+import { Meetings } from "../types/Meetings";
 
 interface TeamsParams {
   active: { teams: boolean };
-  meetings?: any[]; // Adjust the type of meetings based on your actual data structure
+  meetings?: Meetings[]; // Adjust the type of meetings based on your actual data structure
 }
 const router = express.Router();
 
@@ -31,9 +32,10 @@ router.get(
           req.app.locals.msalClient,
           req.session.userId,
         );
-
+        console.log(JSON.stringify(meetings));
         // Assign the meetings to the view parameters
-        params.meetings = meetings.value;
+        //@ts-ignore
+        // params.meetings = meetings.value;
       } catch (err) {
         req.flash("error_msg", [
           "Could not fetch Teams meetings",

@@ -10,7 +10,7 @@ import flash from "connect-flash";
 import { ConfidentialClientApplication, LogLevel } from "@azure/msal-node";
 import indexRouter from "./routes/index";
 import notificationRouter from "./routes/webhook";
-import usersRouter from "./routes/users";
+
 import teamsRouter from "./routes/teams";
 import webhookRouter from "./routes/webhook";
 import authRouter from "./routes/auth";
@@ -110,7 +110,7 @@ app.use("/", indexRouter);
 app.use("/auth", authRouter);
 app.use("/calendar", calendarRouter);
 app.use("/teams", teamsRouter);
-app.use("/users", usersRouter);
+
 app.use("/webhook", webhookRouter);
 app.use("/notifications", notificationRouter);
 

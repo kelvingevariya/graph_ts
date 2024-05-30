@@ -1,18 +1,23 @@
 import express, { Request, Response } from "express";
 
-import dateFns from "date-fns";
-import { zonedTimeToUtc } from "date-fns-tz";
-import iana from "windows-iana";
+// import dateFns from "date-fns";
+// import { zonedTimeToUtc } from "date-fns-tz";
+import { findIana } from "windows-iana";
 import { body, validationResult } from "express-validator";
 import validator from "validator";
 import { createEvent, getCalendarView } from "../graph";
 import { Session } from "express-session";
+import zonedTimeToUtc from "date-fns-tz/zonedTimeToUtc";
+import startOfWeek from "date-fns/startOfWeek";
+import addDays from "date-fns/addDays";
+import formatISO from "date-fns/formatISO";
+import { Calendar } from "../types/Calendar";
 
 const router = express.Router();
 
 interface CalendarParams {
   active: { calendar: boolean };
-  events?: any[]; // Adjust the type of events based on your actual data structure
+  events?: Calendar[]; // Adjust the type of events based on your actual data structure
 }
 
 router.get(
@@ -31,22 +36,22 @@ router.get(
       };
 
       const user = req.app.locals.users[req.session.userId];
-      const timeZoneId = iana.findIana(user.timeZone)[0];
+      const timeZoneId = findIana(user.timeZone)[0];
       console.log(`Time zone: ${timeZoneId.valueOf()}`);
 
       const weekStart = zonedTimeToUtc(
-        dateFns.startOfWeek(new Date()),
+        startOfWeek(new Date()),
         timeZoneId.valueOf(),
       );
-      const weekEnd = dateFns.addDays(weekStart, 7);
-      console.log(`Start: ${dateFns.formatISO(weekStart)}`);
+      const weekEnd = addDays(weekStart, 7);
+      console.log(`Start: ${formatISO(weekStart)}`);
 
       try {
         const events = await getCalendarView(
           req.app.locals.msalClient,
           req.session.userId,
-          dateFns.formatISO(weekStart),
-          dateFns.formatISO(weekEnd),
+          formatISO(weekStart),
+          formatISO(weekEnd),
           user.timeZone,
         );
 

@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import { getTeamsMeetings } from "../graph";
+import { Session } from "express-session";
 
 interface TeamsParams {
   active: { teams: boolean };
@@ -8,33 +9,41 @@ interface TeamsParams {
 const router = express.Router();
 
 /* GET /teams */
-router.get("/", async function (req, res) {
-  if (!req.session.userId) {
-    // Redirect unauthenticated requests to home page
-    res.redirect("/");
-  } else {
-    const params: TeamsParams = {
-      active: { teams: true },
-    };
+router.get(
+  "/",
+  async function (
+    req: Request & {
+      session: Session & { userId?: string };
+    },
+    res: Response,
+  ) {
+    if (!req.session.userId) {
+      // Redirect unauthenticated requests to home page
+      res.redirect("/");
+    } else {
+      const params: TeamsParams = {
+        active: { teams: true },
+      };
 
-    try {
-      // Get the Teams meetings
-      const meetings = await getTeamsMeetings(
-        req.app.locals.msalClient,
-        req.session.userId,
-      );
+      try {
+        // Get the Teams meetings
+        const meetings = await getTeamsMeetings(
+          req.app.locals.msalClient,
+          req.session.userId,
+        );
 
-      // Assign the meetings to the view parameters
-      params.meetings = meetings.value;
-    } catch (err) {
-      req.flash("error_msg", [
-        "Could not fetch Teams meetings",
-        `Debug info: ${JSON.stringify(err, Object.getOwnPropertyNames(err))}`,
-      ]);
+        // Assign the meetings to the view parameters
+        params.meetings = meetings.value;
+      } catch (err) {
+        req.flash("error_msg", [
+          "Could not fetch Teams meetings",
+          `Debug info: ${JSON.stringify(err, Object.getOwnPropertyNames(err))}`,
+        ]);
+      }
+
+      res.render("teams", params);
     }
-
-    res.render("teams", params);
-  }
-});
+  },
+);
 
 export default router;

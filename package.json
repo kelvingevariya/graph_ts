@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www",
-    "lint": "npx eslint . --ext .js",
+    "start": "nodemon ./app.ts",
+    "lint": "npx eslint . --ext .ts",
     "build": "npx tsc"
   },
   "dependencies": {
@@ -24,14 +24,22 @@
     "http-errors": "^2.0.0",
     "isomorphic-fetch": "^3.0.0",
     "morgan": "^1.10.0",
-    "nodemon": "^3.1.1",
     "windows-iana": "^5.1.0"
   },
   "devDependencies": {
-    "@types/node": "^20.12.12",
+    "@types/connect-flash": "^0.0.40",
+    "@types/cookie-parser": "^1.4.7",
+    "@types/express": "^4.17.21",
+    "@types/express-session": "^1.18.0",
+    "@types/hbs": "^4.0.4",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^20.12.13",
+    "@types/validator": "^13.11.10",
     "eslint": "^8.57.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^6.1.1",
+    "nodemon": "^3.1.2",
+    "ts-node": "^10.9.2",
     "typescript": "^5.4.5"
   }
 }

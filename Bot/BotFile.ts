@@ -24,10 +24,23 @@ const openMeetingAndClickJoin = async (url: string) => {
     console.log(htmlContent);
 
     const joinButtonSelector = "#prejoin-join-button";
-    await page.waitForSelector(joinButtonSelector, { timeout: 15000 });
+    await page.waitForSelector(joinButtonSelector, { timeout: 30000 });
 
-    await page.click(joinButtonSelector);
-    console.log("Clicked the join button.");
+    // Ensure the button is visible and enabled
+    const isButtonVisible = await page.evaluate((selector) => {
+      const button = document.querySelector(selector);
+      return button && button.offsetParent !== null && !button.disabled;
+    }, joinButtonSelector);
+
+    if (isButtonVisible) {
+      await page.screenshot({ path: "before_click.png" });
+      await page.evaluate((selector) => {
+        document.querySelector(selector).click();
+      }, joinButtonSelector);
+      console.log("Clicked the join button.");
+    } else {
+      console.log("Join button is not visible or interactable.");
+    }
 
     // Optionally, you can add more interactions or wait for further elements as needed
   } catch (error) {

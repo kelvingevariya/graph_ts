@@ -115,18 +115,18 @@ app.use("/webhook", webhookRouter);
 app.use("/notifications", notificationRouter);
 
 // catch 404 and forward to error handler
-app.use((req: Request, res: Response, next: NextFunction) => {
-  next(createError(404));
-});
+// app.use((req: Request, res: Response, next: NextFunction) => {
+//   next(createError(404));
+// });
 
 // error handler
-app.use((err: any, req: Request, res: Response) => {
-  res.locals.message = err.message;
-  res.locals.error = req.app.get("env") === "development" ? err : {};
+// app.use((err: any, req: Request, res: Response) => {
+//   res.locals.message = err.message;
+//   res.locals.error = req.app.get("env") === "development" ? err : {};
 
-  res.status(err.status || 500);
-  res.render("error");
-});
+//   res.status(err.status || 500);
+//   res.render("error");
+// });
 
 app.listen(3000, () => {
   console.log("Server Started");

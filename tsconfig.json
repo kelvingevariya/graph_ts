@@ -106,6 +106,7 @@
   "include": [
     "types/express-session.d.ts",
     "app.ts",
-    "graph.ts"
+    "graph.ts",
+    "./**/*.ts"
   ]
 }

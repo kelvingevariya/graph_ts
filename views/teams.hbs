@@ -17,8 +17,10 @@
         <td>{{this.subject}}</td>
         <td>{{eventDateTime this.start.dateTime}}</td>
         <td>{{eventDateTime this.end.dateTime}}</td>
-        <td><a href="{{this.onlineMeeting.joinUrl}}" target="_blank">Join Meeting</a></td>
+        <td><a id="join-link" href="{{this.onlineMeeting.joinUrl}}" target="_blank">Join Meeting</a></td>
       </tr>
+      
+     
      
     {{/each}}
     </tbody>

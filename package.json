@@ -24,6 +24,8 @@
     "http-errors": "^2.0.0",
     "isomorphic-fetch": "^3.0.0",
     "morgan": "^1.10.0",
+    "puppeteer": "^22.10.0",
+    "selenium-webdriver": "^4.21.0",
     "windows-iana": "^5.1.0"
   },
   "devDependencies": {

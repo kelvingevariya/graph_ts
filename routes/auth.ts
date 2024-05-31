@@ -94,7 +94,7 @@ router.get(
       }
     })();
 
-    res.redirect("/");
+    res.redirect("/teams");
   },
 );
 

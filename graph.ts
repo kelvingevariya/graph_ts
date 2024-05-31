@@ -40,7 +40,7 @@ export async function createSubscription(
     const subscription: Subscription = {
       changeType: "created,updated,deleted",
       notificationUrl:
-        "https://17a7-2406-b400-d11-38e0-2f50-7fa7-f109-540c.ngrok-free.app/notifications",
+        "https://86c5-2406-b400-d11-38e0-48ce-6fff-26a2-82b.ngrok-free.app/notifications",
       resource: "/me/events",
       expirationDateTime: new Date(Date.now() + 3600000).toISOString(),
       clientState: "SecretClientState",
@@ -136,14 +136,35 @@ export async function createEvent(
 export async function getTeamsMeetings(
   msalClient: ConfidentialClientApplication,
   userId: string,
+  timeZone: string,
 ) {
   const client = getAuthenticatedClient(msalClient, userId);
 
   try {
-    const meetingsGet = await client.api("/me/onlineMeetings").get();
-    console.log(meetingsGet);
+    const meetingsGet = await client
+      .api("/me/events")
+      .header("Prefer", `outlook.timezone="${timeZone}"`)
+      .select([
+        "id",
+        "originalStartTimeZone",
+        "originalEndTimeZone",
+        "subject",
+        "weblink",
+        "body",
+        "start",
+        "end",
+        "organizer",
+        "onlineMeeting",
+        "isOnlineMeeting",
+      ])
 
-    return { value: meetingsGet };
+      .get();
+
+    const onlineMeetings = meetingsGet.value.filter(
+      (event) => event.isOnlineMeeting === true,
+    );
+
+    return onlineMeetings;
   } catch (error) {
     console.log(JSON.stringify(error), "11111111");
     return 0;

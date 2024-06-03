@@ -1,6 +1,8 @@
 import puppeteer, { Browser, Page } from "puppeteer";
 import path from "path";
 import os from "os";
+import { Builder, By, until } from "selenium-webdriver";
+import chrome from "selenium-webdriver/chrome";
 
 const openMeetingAndClickJoin = async (url: string) => {
   /**HTML ELEM <button type="button" class="fui-Button r1alrhcs ___18nks7k ffp7eso f1p3nwhy f11589ue f1q5o8ev f1pdflbu f1phragk f15wkkf3 f1s2uweq fr80ssc f1ukrpxl fecsdlb f1rq72xc fnp9lpt f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1d6v5y2 f1rirnrt f1uu00uk fkvaka8 f1ux7til f9a0qzu f1lkg8j3 fkc42ay fq7113v ff1wgvm fiob0tu f1j6scgf f1x4h75k f4xjyn1 fbgcvur f1ks1yx8 f1o6qegi fcnxywj fmxjhhp f9ddjv3 f17t0x8g f194v5ow f1qgg65p fk7jm04 fhgccpy f32wu9k fu5nqqq f13prjl2 f1czftr5 f1nl83rv f12k37oa fr96u23 f106e4jj fnkn226" id="prejoin-join-button" data-tid="prejoin-join-button" aria-labelledby="prejoin-join-button calling-prejoin-camera-state-id calling-prejoin-mic-state-id" aria-label="Join now" data-track-action-outcome="joinMeeting" data-track-action-scenario="joinOnPreJoinScreen" data-track-module-name="joinMeetingButton" data-track-action-gesture="click" data-track-action-scenario-type="preJoin" data-track-context-work-loads="callType" data-track-databag-id="9b05b980-0628-4b1c-b8d2-ea4f84e97482">Join now</button> */
@@ -16,22 +18,24 @@ const openMeetingAndClickJoin = async (url: string) => {
     const page = await browser.newPage();
     await page.setViewport({ width: 1920, height: 1080 });
 
-    await page.goto(url, { timeout: 60000, waitUntil: "networkidle0" });
+    await page.goto(url, { timeOut: 600000, waitUntil: "networkidle0" });
 
+    await page.screenshot({ path: "./scrnshot.png", type: "png" });
     const joinButtonSelector = "#prejoin-join-button";
-    // await page.waitForSelector(joinButtonSelector, { timeout: 30000 });
+
+    // Wait for the join button to appear
+    await page.waitForSelector(joinButtonSelector, { timeout: 300000 });
 
     // Ensure the button is visible and enabled
-
     const isButtonVisible = await page.evaluate((selector) => {
-      const button = document.querySelector("#prejoin-join-button");
-      return button;
+      const button = document.querySelector(selector);
+      return button !== null && button.offsetParent !== null;
     }, joinButtonSelector);
 
     if (isButtonVisible) {
-      await page.screenshot({ path: "before_click.png" });
+      await page.screenshot({ path: "./before_click.png" });
       await page.evaluate((selector) => {
-        document.querySelector(selector).click();
+        document.querySelector(selector)?.click();
       }, joinButtonSelector);
       console.log("Clicked the join button.");
     } else {

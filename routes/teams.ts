@@ -39,13 +39,13 @@ router.get(
         // console.log(meetings);
         // Assign the meetings to the view parameters
         //@ts-ignore
-        meetings.forEach((meet) => {
-          scheduleTask(
-            meet.onlineMeeting.joinUrl,
-            meet.start.dateTime,
-            meet.start.timeZone,
-          );
-        });
+        // meetings.forEach((meet) => {
+        //   scheduleTask(
+        //     meet.onlineMeeting.joinUrl,
+        //     meet.start.dateTime,
+        //     meet.start.timeZone,
+        //   );
+        // });
 
         params.meetings = meetings;
         // params.func = openTeamsUrl;

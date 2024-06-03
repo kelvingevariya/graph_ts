@@ -42,7 +42,7 @@ export async function createSubscription(
       notificationUrl:
         "https://f106-2406-b400-d11-38e0-8f69-ef23-4838-22ec.ngrok-free.app/notifications",
       resource: "/me/events",
-      expirationDateTime: new Date(Date.now() + 3600000).toISOString(),
+      expirationDateTime: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
       clientState: "SecretClientState",
     };
     try {
@@ -297,4 +297,24 @@ export function getAuthenticatedClient(
   });
 
   return client;
+}
+
+export async function getEventDetails(
+  userId: string,
+  eventId: string,
+  msalClient,
+) {
+  const client = getAuthenticatedClient(msalClient, userId);
+
+  try {
+    const event = await client
+      .api(`/me/events/${eventId}`)
+      .select("subject,organizer,start,end,onlineMeeting,isOnlineMeeting")
+      .get();
+
+    return event;
+  } catch (error) {
+    console.error("Error getting event details:", error);
+    return null;
+  }
 }

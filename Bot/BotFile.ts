@@ -10,26 +10,22 @@ const openMeetingAndClickJoin = async (url: string) => {
       headless: false,
       executablePath: "/bin/google-chrome",
       userDataDir: `/.config/google-chrome/default`,
+      args: ["--enable-background-blur"],
     });
 
     const page = await browser.newPage();
     await page.setViewport({ width: 1920, height: 1080 });
 
-    page.on("error", (err) => console.error(`Error from page: ${err}`));
-    page.on("pageerror", (err) => console.error(`Page error: ${err}`));
-
-    await page.goto(url, { timeout: 30000, waitUntil: "networkidle0" });
-
-    const htmlContent = await page.content();
-    console.log(htmlContent);
+    await page.goto(url, { timeout: 60000, waitUntil: "networkidle0" });
 
     const joinButtonSelector = "#prejoin-join-button";
-    await page.waitForSelector(joinButtonSelector, { timeout: 30000 });
+    // await page.waitForSelector(joinButtonSelector, { timeout: 30000 });
 
     // Ensure the button is visible and enabled
+
     const isButtonVisible = await page.evaluate((selector) => {
-      const button = document.querySelector(selector);
-      return button && button.offsetParent !== null && !button.disabled;
+      const button = document.querySelector("#prejoin-join-button");
+      return button;
     }, joinButtonSelector);
 
     if (isButtonVisible) {

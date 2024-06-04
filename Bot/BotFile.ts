@@ -1,23 +1,69 @@
-import { Client } from "@microsoft/microsoft-graph-client";
-import { TokenCredentialAuthenticationProvider } from "@microsoft/microsoft-graph-client/authProviders/azureTokenCredentials";
-import { InteractiveBrowserCredential } from "@azure/identity";
-import dotenv from "dotenv";
-dotenv.config();
+import { getStream, launch } from "puppeteer-stream";
 
-const credential = new InteractiveBrowserCredential({
-  clientId: process.env.OAUTH_CLIENT_ID,
-  tenantId: process.env.TENANT_ID,
-});
-const authProvider = new TokenCredentialAuthenticationProvider(credential, {
-  scopes: ["https://graph.microsoft.com/.default"],
-});
-const client = Client.initWithMiddleware({ authProvider });
+import fs from "node:fs";
 
-const joinMeeting = async (url: string) => {
+const openMeetingAndClickJoin2 = async (
+  meetingUrl: string,
+  endTime: number,
+) => {
+  let browser;
   try {
-    // Use the Microsoft Graph API to join the meeting
-    const response = await client.api(url).post({});
-    console.log("Joined the meeting:", response);
+    browser = await launch({
+      headless: false,
+      executablePath: "/bin/google-chrome",
+      userDataDir: `/.config/google-chrome/default`,
+      args: ["--enable-background-blur"],
+    });
+
+    const page = await browser.newPage();
+    await page.setViewport({ width: 1920, height: 1080 });
+
+    await page.goto(meetingUrl);
+    // await page.setDefaultNavigationTimeout(60000);
+
+    // Wait for the iframe and get its content frame
+    await page.waitForSelector("iframe.embedded-electron-webview");
+    const iframeElement = await page.$("iframe.embedded-electron-webview");
+    const iframe = await iframeElement.contentFrame();
+
+    // Wait for the join button and click it
+    const joinButtonSelector = "#prejoin-join-button";
+    await iframe.waitForSelector(joinButtonSelector, { visible: true });
+    const button = await iframe.$(joinButtonSelector);
+    await button.click();
+    console.log("Clicked the Join Button.");
+
+    await iframe.waitForSelector("span#call-status", { visible: true });
+
+    //experience-container-84a53aeb-38e1-4c78-9b86-8c5cb5101d33
+    // experience-container-0437eca2-0f79-4376-b7e4-807f18d3e6f9
+    // Start recording with puppeteer-stream
+
+    const videoStream = await getStream(page, {
+      audio: true,
+      video: true,
+    });
+
+    const date = new Date().toUTCString();
+    const writer = videoStream.pipe(
+      fs.createWriteStream(`./rec/meeting_recording_${date}.mp4`),
+    );
+
+    // Calculate the end time in milliseconds
+    const endTimeInMilliseconds = endTime;
+
+    // Wait for the specified end time
+    // await new Promise((resolve) => setTimeout(resolve, 30000));
+
+    console.log("Clicked the Leave Button.");
+
+    // Stop recording
+    setTimeout(() => {
+      videoStream.destroy();
+      writer.end();
+      console.log("Recording saved.");
+      page.close();
+    }, endTimeInMilliseconds);
   } catch (error) {
     console.error(`Error: ${error}`);
   }
@@ -28,14 +74,17 @@ export const scheduleTask = (
   url: string,
   startTime: string,
   timeZone: string,
+  endTime: string,
 ) => {
   const now = new Date();
   const meetingTime = new Date(startTime);
+  const endTimeArg = new Date(endTime);
+  console.log(endTimeArg);
   console.log(startTime, "start Time ");
   console.log(now, "present time");
 
   const delay = meetingTime.getTime() - now.getTime();
-  console.log(delay);
+  const endDelay = endTimeArg.getTime() - now.getTime();
 
   if (delay <= 0) {
     console.log("Scheduled time is in the past. Please provide a future time.");
@@ -45,47 +94,5 @@ export const scheduleTask = (
   console.log(
     `Task scheduled to run at ${meetingTime.toLocaleTimeString()} ${timeZone}`,
   );
-  setTimeout(() => joinMeeting(url), delay);
+  setTimeout(() => openMeetingAndClickJoin2(url, endDelay), delay);
 };
-
-// export const openTeamsUrl = async () => {
-//   let browser;
-//   try {
-//     browser = await puppeteer.launch({
-//       headless: false,
-//       executablePath: "/bin/google-chrome",
-//       userDataDir: `/.config/google-chrome/default`,
-//     });
-
-//     const page = await browser.newPage();
-
-//     await page.setViewport({ width: 1920, height: 1080 });
-
-//     page.on("error", (err) => console.error(`Error from page: ${err}`));
-
-//     await page.goto("https://google.com", {
-//       timeout: 60000,
-//       waitUntil: "networkidle0",
-//     }); // Wait until network is idle (no network requests for 500ms)
-
-//     // Wait for a selector that signifies the page has fully loaded
-//     const joinButtonSelector = "#APjFqb"; // Adjust the selector as needed
-//     await page.waitForSelector(joinButtonSelector, {
-//       timeout: 5000,
-//       visible: true,
-//     }); // Wait for join button, increase timeout if necessary
-
-//     // Handle popup windows, if any
-
-//     await page.type(joinButtonSelector, "Hello"); // Click join button on the main page
-
-//     console.log(`Join button clicked at ${new Date().toLocaleTimeString()}`);
-
-//     // Keep the browser open
-//     await new Promise(() => {});
-//   } catch (err) {
-//     console.error("Error during meeting setup:", err);
-//   }
-// };
-
-// openTeamsUrl();

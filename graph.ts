@@ -40,7 +40,7 @@ export async function createSubscription(
     const subscription: Subscription = {
       changeType: "created,updated,deleted",
       notificationUrl:
-        "https://f106-2406-b400-d11-38e0-8f69-ef23-4838-22ec.ngrok-free.app/notifications",
+        "https://1f71-2406-b400-d11-38e0-698e-8861-2149-76be.ngrok-free.app/notifications",
       resource: "/me/events",
       expirationDateTime: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
       clientState: "SecretClientState",

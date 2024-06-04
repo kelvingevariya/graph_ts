@@ -32,7 +32,7 @@ router.post("/", async (req: Request, res: Response) => {
             const timeZone = eventDetails.start.timeZone;
 
             // Schedule the bot to join the meeting
-            scheduleTask(meetingUrl, startTime, timeZone);
+            // scheduleTask(meetingUrl, startTime, timeZone);
           }
           //origin
         }

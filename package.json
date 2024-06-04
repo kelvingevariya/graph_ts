@@ -10,7 +10,6 @@
   "dependencies": {
     "@azure/msal-node": "^2.8.1",
     "@microsoft/microsoft-graph-client": "^3.0.7",
-    "botbuilder": "^4.22.2",
     "connect-flash": "^0.1.1",
     "cookie-parser": "~1.4.4",
     "date-fns": "^2.30.0",

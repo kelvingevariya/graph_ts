@@ -44,7 +44,7 @@ const openMeetingAndClickJoin2 = async (
       video: true,
     });
 
-    const date = new Date().toUTCString();
+    const date = new Date().toLocaleString("es-CL");
     const writer = videoStream.pipe(
       fs.createWriteStream(`./rec/meeting_recording_${date}.mp4`),
     );

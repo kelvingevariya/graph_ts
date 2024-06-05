@@ -13,31 +13,32 @@ router.post("/", async (req: Request, res: Response) => {
   } else {
     const notification = req.body;
 
-    if (notification.value && notification.value.length > 0) {
-      for (const event of notification.value) {
-        if (event.changeType === "created" && event.resourceData) {
-          const eventId = event.resourceData.id;
-          const userId = event.resource.split("/")[1]; // Extract userId from resource
+    // if (notification.value && notification.value.length > 0) {
+    //   for (const event of notification.value) {
+    //     if (event.changeType === "created" && event.resourceData) {
+    //       const eventId = event.resourceData.id;
+    //       const userId = event.resource.split("/")[1]; // Extract userId from resource
 
-          // Get event details using Microsoft Graph API
-          const eventDetails = await getEventDetails(
-            userId,
-            eventId,
-            req.app.locals.msalClient,
-          );
+    //       // Get event details using Microsoft Graph API
+    //       const eventDetails = await getEventDetails(
+    //         userId,
+    //         eventId,
+    //         req.app.locals.msalClient,
+    //       );
 
-          if (eventDetails && eventDetails.onlineMeeting) {
-            const meetingUrl = eventDetails.onlineMeeting.joinUrl;
-            const startTime = eventDetails.start.dateTime;
-            const timeZone = eventDetails.start.timeZone;
+    //       if (eventDetails && eventDetails.onlineMeeting) {
+    //         const meetingUrl = eventDetails.onlineMeeting.joinUrl;
+    //         const startTime = eventDetails.start.dateTime;
+    //         const endTime = eventDetails.end.dateTime;
+    //         const timeZone = eventDetails.start.timeZone;
 
-            // Schedule the bot to join the meeting
-            // scheduleTask(meetingUrl, startTime, timeZone);
-          }
-          //origin
-        }
-      }
-    }
+    //         // Schedule the bot to join the meeting
+    //         scheduleTask(meetingUrl, startTime, timeZone, endTime);
+    //       }
+    //       //origin
+    //     }
+    //   }
+    // }
 
     console.log("Received notification:");
     res.status(202).json({ notification });

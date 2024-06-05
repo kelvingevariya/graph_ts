@@ -116,10 +116,21 @@ export async function createEvent(
       contentType: "text",
       content: formData.body,
     },
+
+    isOnlineMeeting: true,
+    attendees: [
+      {
+        emailAddress: {
+          address: "teamsbot1@outlook.com",
+          name: "Solus Bot",
+        },
+        type: "required",
+      },
+    ],
+    onlineMeetingProvider: "teamsForBusiness",
   };
 
   if (formData.attendees) {
-    newEvent.attendees = [];
     formData.attendees.forEach((attendee) => {
       newEvent.attendees.push({
         type: "required",
@@ -163,7 +174,7 @@ export async function getTeamsMeetings(
     const onlineMeetings = meetingsGet.value.filter(
       (event) => event.isOnlineMeeting === true,
     );
-
+    console.log(onlineMeetings);
     return onlineMeetings;
   } catch (error) {
     console.log(JSON.stringify(error), "11111111");

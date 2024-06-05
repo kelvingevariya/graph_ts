@@ -26,3 +26,13 @@
     </tbody>
   </tbody>
 </table>
+
+<script>
+  const socket = new WebSocket('ws://localhost:3000');
+
+  socket.addEventListener('message', function (event) {
+    if (event.data === 'update') {
+      location.reload();
+    }
+  });
+</script>

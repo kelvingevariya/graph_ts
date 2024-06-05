@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 import logger from "morgan";
 import dotenv from "dotenv";
 import session, { Session } from "express-session";
+import http from "http";
+import WebSocket from "ws";
 
 import flash from "connect-flash";
 import { ConfidentialClientApplication, LogLevel } from "@azure/msal-node";
@@ -19,6 +21,8 @@ import calendarRouter from "./routes/calendar";
 dotenv.config();
 
 const app = express();
+const server = http.createServer(app);
+export const wss = new WebSocket.Server({ server });
 
 // In-memory storage of logged-in users
 app.locals.users = {};
@@ -128,7 +132,7 @@ app.use("/notifications", notificationRouter);
 //   res.render("error");
 // });
 
-app.listen(3000, () => {
+server.listen(3000, () => {
   console.log("Server Started");
 });
 

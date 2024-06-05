@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import bodyParser from "body-parser";
 import { scheduleTask } from "../Bot/BotFile";
 import { getEventDetails } from "../graph";
+import { wss } from "../app";
 
 const router = express.Router();
 
@@ -39,6 +40,12 @@ router.post("/", async (req: Request, res: Response) => {
     //     }
     //   }
     // }
+
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send("update");
+      }
+    });
 
     console.log("Received notification:");
     res.status(202).json({ notification });

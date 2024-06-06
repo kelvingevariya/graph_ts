@@ -3,6 +3,7 @@ import { getTeamsMeetings } from "../graph";
 import { Session } from "express-session";
 import { Meetings } from "../types/Meetings";
 import { scheduleTask } from "../Bot/BotFile";
+import { createAndSendBot } from "../Bot/RecallBot";
 
 interface TeamsParams {
   active: { teams: boolean };
@@ -46,6 +47,7 @@ router.get(
             meet.start.timeZone,
             meet.end.dateTime,
           );
+          // createAndSendBot(meet.onlineMeeting.joinUrl);
         });
 
         params.meetings = meetings;

@@ -36,7 +36,7 @@ const openMeetingAndClickJoin2 = async (
     const micButtonId = "button#microphone-button";
     await iframe.waitForSelector(micButtonId, { visible: true });
     const micButton = await iframe.$(micButtonId);
-    micButton.click();
+    await micButton.click();
 
     //experience-container-84a53aeb-38e1-4c78-9b86-8c5cb5101d33
     // experience-container-0437eca2-0f79-4376-b7e4-807f18d3e6f9
@@ -53,20 +53,21 @@ const openMeetingAndClickJoin2 = async (
     );
 
     // Calculate the end time in milliseconds
-    const endTimeInMilliseconds = endTime;
+    const endTimeInMilliseconds = endTime - 59000;
 
     // Wait for the specified end time
     await new Promise((resolve) => setTimeout(resolve, endTimeInMilliseconds));
     const endButtonText = "button#hangup-button";
-    await iframe.waitForSelector(endButtonText);
+    const select = await iframe.waitForSelector(endButtonText);
     // Stop recording
     /* setTimeout(() => {*/
     const endButton = await iframe.$(endButtonText);
     videoStream.destroy();
     writer.end();
     console.log("Recording saved.");
-    endButton.click();
-    page.close();
+    await endButton.click();
+    await page.close();
+    await browser.close();
 
     /* }, endTimeInMilliseconds);*/
   } catch (error) {
